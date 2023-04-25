@@ -23,23 +23,28 @@
 #include <RFThings.h>
 #include <radio/sx126x/rfthings_sx126x.h>
 
-#define TX_INTERVAL 10
-
-rfthings_sx126x sx126x(E22_NSS, E22_NRST, E22_BUSY, E22_DIO1, E22_RXEN);
+rfthings_sx126x sx126x;
 rft_status_t status;
 
 char payload[255];
 uint32_t payload_len;
 
+#define SW_VCTL1_PIN PB8
+#define SW_VCTL2_PIN PC13
+
+typedef enum {
+    RF_SW_MODE_TX = 0,
+    RF_SW_MODE_RX
+} rf_sw_mode_t;
+
 void setup()
 {
+    pinMode(SW_VCTL1_PIN, OUTPUT);
+    pinMode(SW_VCTL2_PIN, OUTPUT);
+
     Serial.begin(115200);
 
-    while (!Serial && (millis() < 3000))
-        ;
-
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
+    while (!Serial && (millis() < 3000)) {}
 
     // Init SX126x
     Serial.println("#### SX126X INITIALIZE ####");
@@ -59,7 +64,7 @@ void loop()
 {
     Serial.print("Listening for LoRa PHY message: ");
 
-    status = sx126x.receive_lora((byte *)payload, payload_len, 2000, NULL);
+    status = sx126x.receive_lora((byte *)payload, payload_len, 2000, sw_ctrl_set_mode_rx);
     Serial.println(rft_status_to_str(status));
 
     if (status == RFT_STATUS_OK)
@@ -82,13 +87,29 @@ void loop()
             Serial.print(" ");
         }
         Serial.println();
-
-        digitalWrite(LED_BUILTIN, HIGH);
-        delay(125);
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(50);
-        digitalWrite(LED_BUILTIN, HIGH);
-        delay(125);
-        digitalWrite(LED_BUILTIN, LOW);
     }
+}
+
+void sw_ctrl_set_mode(rf_sw_mode_t mode)
+{
+  if (mode == RF_SW_MODE_TX)
+  {
+    digitalWrite(SW_VCTL1_PIN, LOW);
+    digitalWrite(SW_VCTL2_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(SW_VCTL1_PIN, HIGH);
+    digitalWrite(SW_VCTL2_PIN, LOW);
+  }
+}
+
+void sw_ctrl_set_mode_tx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+}
+
+void sw_ctrl_set_mode_rx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_RX);
 }

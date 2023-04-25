@@ -140,6 +140,7 @@ typedef struct
 	uint8_t nbSync;								 /*!< Number of header blocks */
 	uint32_t frequency;						 /*!< Transmission frequency, in Hz */
 	int8_t power;									 /*!< Transmission power */
+	uint32_t syncword;
 } rft_lrfhss_params_t;
 
 // LoraWAN activation types

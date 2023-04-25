@@ -23,23 +23,26 @@
 #include <RFThings.h>
 #include <radio/sx126x/rfthings_sx126x.h>
 
-rfthings_sx126x sx126x(E22_NSS, E22_NRST, E22_BUSY, E22_DIO1, E22_RXEN);
+rfthings_sx126x sx126x;
 rft_status_t status;
 
-char payload[255];
-uint32_t payload_len;
+#define SW_VCTL1_PIN PB8
+#define SW_VCTL2_PIN PC13
 
-String message = "hello world";
+typedef enum {
+    RF_SW_MODE_TX = 0,
+    RF_SW_MODE_RX
+} rf_sw_mode_t;
 
 void setup()
 {
+    pinMode(SW_VCTL1_PIN, OUTPUT);
+    pinMode(SW_VCTL2_PIN, OUTPUT);
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+
     Serial.begin(115200);
 
-    while (!Serial && (millis() < 3000))
-        ;
-
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
+    while (!Serial && (millis() < 3000)) {}
 
     // Init SX126x
     Serial.println("#### SX126X INITIALIZE ####");
@@ -49,22 +52,41 @@ void setup()
 
     // CW Configuration
     sx126x.set_frequency(868100000);
-    sx126x.set_tx_power(14);
+    sx126x.set_tx_power(22);
 }
 
 void loop()
 {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(125);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(50);
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(125);
-    digitalWrite(LED_BUILTIN, LOW);
-
+    Serial.println("start_continuous_wave");
+    sw_ctrl_set_mode_tx();
     sx126x.start_continuous_wave();
     delay(5000); // 5s
 
+    Serial.println("stop_continuous_wave");
     sx126x.stop_continuous_wave();
     delay(1000); // 1s
+}
+
+void sw_ctrl_set_mode(rf_sw_mode_t mode)
+{
+  if (mode == RF_SW_MODE_TX)
+  {
+    digitalWrite(SW_VCTL1_PIN, LOW);
+    digitalWrite(SW_VCTL2_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(SW_VCTL1_PIN, HIGH);
+    digitalWrite(SW_VCTL2_PIN, LOW);
+  }
+}
+
+void sw_ctrl_set_mode_tx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+}
+
+void sw_ctrl_set_mode_rx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_RX);
 }

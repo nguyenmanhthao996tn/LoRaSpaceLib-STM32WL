@@ -107,6 +107,7 @@ class rfthings_radio {
         void set_lrfhss_nbSync(uint8_t nbSync);
         void set_lrfhss_frequency(uint32_t frequency);
         void set_lrfhss_power(int8_t power);
+        void set_lrfhss_syncword(uint32_t syncword);
 
         // get LR-FHSS params
         rft_lrfhss_coding_rate_t get_lrfhss_codingRate(void);
@@ -116,6 +117,7 @@ class rfthings_radio {
         uint8_t get_lrfhss_nbSync(void);
         uint32_t get_lrfhss_frequency(void);
         int8_t get_lrfhss_power(void);
+        uint32_t get_lrfhss_syncword(void);
 
         // For doppler test
         bool get_force_ldro(void);

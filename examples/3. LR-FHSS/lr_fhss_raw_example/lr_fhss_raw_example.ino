@@ -23,14 +23,9 @@
 #include <RFThings.h>
 #include <radio/sx126x/rfthings_sx126x.h>
 
-#define TX_INTERVAL 10
+#define TX_INTERVAL 15
 
-// Keys and device address are MSB
-static uint8_t nwkS_key[] = {0xC8, 0x45, 0xC4, 0xD3, 0xBE, 0x42, 0xA6, 0xAA, 0xDA, 0xD9, 0x01, 0x97, 0xDD, 0x85, 0x35, 0x05};
-static uint8_t appS_key[] = {0x4B, 0x58, 0x2A, 0xA2, 0x18, 0x8D, 0x3B, 0x98, 0xC9, 0xD3, 0x85, 0x5C, 0x1B, 0x2C, 0x30, 0x0F};
-static uint8_t dev_addr[] = {0x26, 0x0B, 0x5E, 0x99};
-
-rfthings_sx126x sx126x(-1, -1, -1, -1, -1);
+rfthings_sx126x sx126x;
 rft_status_t status;
 
 char payload[255];
@@ -38,15 +33,23 @@ uint32_t payload_len;
 
 const String message = "Hello Space!";
 
+#define SW_VCTL1_PIN PB8
+#define SW_VCTL2_PIN PC13
+
+typedef enum {
+    RF_SW_MODE_TX = 0,
+    RF_SW_MODE_RX
+} rf_sw_mode_t;
+
 void setup()
 {
+    pinMode(SW_VCTL1_PIN, OUTPUT);
+    pinMode(SW_VCTL2_PIN, OUTPUT);
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+
     Serial.begin(115200);
 
-    while (!Serial && (millis() < 3000))
-        ;
-
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
+    while (!Serial && (millis() < 3000)) {}
 
     // Init SX126x
     Serial.println("#### SX126X INITIALIZE ####");
@@ -54,27 +57,23 @@ void setup()
     Serial.print("SX126x initialization: ");
     Serial.println(rft_status_to_str(status));
 
-    // LoRaWAN parameters
-    sx126x.set_lorawan_activation_type(RFT_LORAWAN_ACTIVATION_TYPE_ABP);
-    sx126x.set_application_session_key(appS_key);
-    sx126x.set_network_session_key(nwkS_key);
-    sx126x.set_device_address(dev_addr);
-
     // Config LR-FHSS parameter
     sx126x.set_lrfhss_codingRate(RFT_LRFHSS_CODING_RATE_1_3);
     sx126x.set_lrfhss_bandwidth(RFT_LRFHSS_BANDWIDTH_136_7_KHZ);
     sx126x.set_lrfhss_grid(RFT_LRFHSS_GRID_3_9_KHZ);
     sx126x.set_lrfhss_hopping(true);
     sx126x.set_lrfhss_nbSync(4);
-    sx126x.set_lrfhss_frequency(862000000);
-    sx126x.set_lrfhss_power(21);
+    sx126x.set_lrfhss_frequency(868200000);
+    sx126x.set_lrfhss_power(22);
+    sx126x.set_lrfhss_syncword(0x2C0F7995);
 }
 
 void loop()
 {
     Serial.println("Sending LR-FHSS message");
     message.toCharArray(payload, 255);
-    status = sx126x.send_lorawan_over_lrfhss((byte *)payload, message.length());
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+    status = sx126x.send_lrfhss((byte *)payload, message.length());
     Serial.println(rft_status_to_str(status));
 
     delay(TX_INTERVAL * 1000);
@@ -84,4 +83,18 @@ void build_payload(void)
 {
     message.toCharArray(payload, 255);
     payload_len = message.length();
+}
+
+void sw_ctrl_set_mode(rf_sw_mode_t mode)
+{
+  if (mode == RF_SW_MODE_TX)
+  {
+    digitalWrite(SW_VCTL1_PIN, LOW);
+    digitalWrite(SW_VCTL2_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(SW_VCTL1_PIN, HIGH);
+    digitalWrite(SW_VCTL2_PIN, LOW);
+  }
 }

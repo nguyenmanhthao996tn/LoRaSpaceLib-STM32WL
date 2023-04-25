@@ -51,6 +51,7 @@ rft_status_t rfthings_radio::create_params_by_region(rft_region_t region) {
     lrfhss_params.nbSync = 4;
     lrfhss_params.power = 21;
     lrfhss_params.grid = RFT_LRFHSS_GRID_3_9_KHZ;
+    lrfhss_params.syncword = 0x2C0F7995;
 
     if (region == RFT_REGION_EU863_870) {
         lora_params.tx_power = 16;
@@ -388,6 +389,12 @@ void rfthings_radio::set_lrfhss_power(int8_t power)
     lrfhss_params.power = power;
 }
 
+
+void rfthings_radio::set_lrfhss_syncword(uint32_t syncword)
+{
+    lrfhss_params.syncword = syncword;
+}
+
 rft_lrfhss_coding_rate_t rfthings_radio::get_lrfhss_codingRate(void)
 {
     return lrfhss_params.codingRate;
@@ -424,14 +431,19 @@ int8_t rfthings_radio::get_lrfhss_power(void)
 }
 
 
+uint32_t rfthings_radio::get_lrfhss_syncword(void)
+{
+    return lrfhss_params.syncword;
+}
+
 bool rfthings_radio::get_force_ldro(void)
 {
-
+    return false; // TODO: Implement this
 }
 
 void rfthings_radio::set_force_ldro(bool force_ldro)
 {
-
+ // TODO: Implement this
 }
 
 uint8_t rfthings_radio::build_uplink_packet(unsigned char *payload, uint8_t payload_len, unsigned char *lorawan_packet) {

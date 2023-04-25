@@ -20,7 +20,7 @@ typedef void (*voidFuncPtr)(void);
 
 class rfthings_sx126x : public rfthings_radio {
         public:
-        rfthings_sx126x(byte nss_pin, byte rst_pin, byte busy_pin, byte dio1_pin, byte rxen_pin);
+        rfthings_sx126x(void);
         ~rfthings_sx126x(void);
 
         rft_status_t init(rft_region_t region);

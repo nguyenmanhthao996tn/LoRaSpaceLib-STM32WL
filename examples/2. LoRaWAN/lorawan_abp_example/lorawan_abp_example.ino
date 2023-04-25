@@ -23,34 +23,37 @@
 #include <RFThings.h>
 #include <radio/sx126x/rfthings_sx126x.h>
 
-#define TX_INTERVAL 20
-
-#define SW_VCTL1_PIN PB8
-#define SW_VCTL2_PIN PC13
+#define TX_INTERVAL 15
 
 // Keys and device address are MSB
 static uint8_t nwkS_key[] = {0xC8, 0x45, 0xC4, 0xD3, 0xBE, 0x42, 0xA6, 0xAA, 0xDA, 0xD9, 0x01, 0x97, 0xDD, 0x85, 0x35, 0x05};
 static uint8_t appS_key[] = {0x4B, 0x58, 0x2A, 0xA2, 0x18, 0x8D, 0x3B, 0x98, 0xC9, 0xD3, 0x85, 0x5C, 0x1B, 0x2C, 0x30, 0x0F};
 static uint8_t dev_addr[] = {0x26, 0x0B, 0x5E, 0x99};
 
-rfthings_sx126x sx126x(-1, -1, -1, -1, -1);
+rfthings_sx126x sx126x;
 rft_status_t status;
 
 char payload[255];
 uint32_t payload_len;
 
-String message = "hello";
+String message = "hello world";
+
+#define SW_VCTL1_PIN PB8
+#define SW_VCTL2_PIN PC13
+
+typedef enum {
+    RF_SW_MODE_TX = 0,
+    RF_SW_MODE_RX
+} rf_sw_mode_t;
 
 void setup()
 {
-    Serial.begin(115200);
-
-    while (!Serial && (millis() < 3000))
-        ;
-
     pinMode(SW_VCTL1_PIN, OUTPUT);
     pinMode(SW_VCTL2_PIN, OUTPUT);
-    sw_ctrl_set_mode(1);
+
+    Serial.begin(115200);
+
+    while (!Serial && (millis() < 3000)) {}
 
     // Init SX126x
     Serial.println("#### SX126X Initialize ####");
@@ -81,8 +84,7 @@ void loop()
     Serial.print("Sending LoRaWAN message: ");
 
     build_payload();
-    sw_ctrl_set_mode(1);
-    status = sx126x.send_uplink((byte *)payload, payload_len, NULL, NULL);
+    status = sx126x.send_uplink((byte *)payload, payload_len, sw_ctrl_set_mode_tx, sw_ctrl_set_mode_rx);
 
     switch (status)
     {
@@ -131,9 +133,9 @@ void build_payload(void)
     payload_len = message.length();
 }
 
-void sw_ctrl_set_mode(int mode)
+void sw_ctrl_set_mode(rf_sw_mode_t mode)
 {
-  if (mode == 1)
+  if (mode == RF_SW_MODE_TX)
   {
     digitalWrite(SW_VCTL1_PIN, LOW);
     digitalWrite(SW_VCTL2_PIN, HIGH);
@@ -143,4 +145,14 @@ void sw_ctrl_set_mode(int mode)
     digitalWrite(SW_VCTL1_PIN, HIGH);
     digitalWrite(SW_VCTL2_PIN, LOW);
   }
+}
+
+void sw_ctrl_set_mode_tx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+}
+
+void sw_ctrl_set_mode_rx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_RX);
 }

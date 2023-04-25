@@ -19,13 +19,8 @@
 
 volatile bool detect_preamble;
 
-rfthings_sx126x::rfthings_sx126x(byte nss_pin, byte rst_pin, byte busy_pin, byte dio1_pin, byte antenna_switch_pin)
+rfthings_sx126x::rfthings_sx126x(void)
 {
-	sx126x_hal.nss = nss_pin;
-	sx126x_hal.reset = rst_pin;
-	sx126x_hal.busy = busy_pin;
-	sx126x_hal.irq = dio1_pin;
-	sx126x_hal.antenna_switch = antenna_switch_pin;
 }
 
 rfthings_sx126x::~rfthings_sx126x(void)
@@ -49,19 +44,8 @@ rft_status_t rfthings_sx126x::init(rft_region_t region)
 		return RFT_STATUS_ERROR_INVALID_REGION;
 	}
 
-	// pinMode(sx126x_hal.reset, OUTPUT);
-	// pinMode(sx126x_hal.busy, INPUT);
-	// pinMode(sx126x_hal.irq, INPUT_PULLUP);
-	// pinMode(sx126x_hal.nss, OUTPUT);
-	// pinMode(sx126x_hal.antenna_switch, OUTPUT);
-
-	// SPI.begin();
   SubGhz.SPI.begin();
   SubGhz.setResetActive(false);
-
-	// digitalWrite(sx126x_hal.nss, HIGH);
-
-	// digitalWrite(sx126x_hal.antenna_switch, LOW);
 
 	sx126x_hal_reset(&sx126x_hal);
 
@@ -72,13 +56,7 @@ rft_status_t rfthings_sx126x::init(rft_region_t region)
 
 	sx126x_set_reg_mode(&sx126x_hal, SX126X_REG_MODE_DCDC);
 
-	// sx126x_cfg_tx_clamp(&sx126x_hal);
-
 	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
-
-	// sx126x_set_dio2_as_rf_sw_ctrl(&sx126x_hal, true);
-
-	// sx126x_set_dio3_as_tcxo_ctrl(&sx126x_hal, SX126X_TCXO_CTRL_1_7V, 320);
 
 	sx126x_cal(&sx126x_hal, 0x7f);
 
@@ -191,8 +169,6 @@ rft_status_t rfthings_sx126x::receive_lora(byte *payload, uint32_t payload_len, 
 
 	sx126x_set_pkt_type(&sx126x_hal, SX126X_PKT_TYPE_LORA);
 
-	// digitalWrite(sx126x_hal.antenna_switch, HIGH);
-
 	sx126x_mod_params_lora_t lora_mod_params;
 	lora_mod_params.sf = map_spreading_factor(lora_params.spreading_factor);
 	lora_mod_params.bw = map_bandwidth(lora_params.bandwidth);
@@ -292,8 +268,6 @@ rft_status_t rfthings_sx126x::relay(rft_lora_params_t *relay_lora_params, byte *
 
 	sx126x_set_pkt_type(&sx126x_hal, SX126X_PKT_TYPE_LORA);
 
-	// digitalWrite(sx126x_hal.antenna_switch, HIGH);
-
 	sx126x_mod_params_lora_t lora_mod_params;
 	lora_mod_params.sf = map_spreading_factor(relay_lora_params->spreading_factor);
 	lora_mod_params.bw = map_bandwidth(relay_lora_params->bandwidth);
@@ -331,6 +305,7 @@ rft_status_t rfthings_sx126x::relay(rft_lora_params_t *relay_lora_params, byte *
 	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
 	detect_preamble = false;
 	// attachInterrupt(digitalPinToInterrupt(sx126x_hal.irq), (voidFuncPtr)(rfthings_sx126x::irq_relay), RISING); // TODO: Add this function from SubGhz library
+	// SubGhz.attachInterrupt((voidFuncPtr)(rfthings_sx126x::irq_relay));
 
 	uint32_t rxTime = (1e6 * relay_lora_params->relay_rx_symbol * (1 << map_spreading_factor(relay_lora_params->spreading_factor)) / sx126x_get_lora_bw_in_hz(map_bandwidth(relay_lora_params->bandwidth))) / T_STEP;
 	uint32_t sleepTime = (relay_lora_params->relay_sleep_interval_us) / T_STEP - rxTime;
@@ -342,12 +317,19 @@ rft_status_t rfthings_sx126x::relay(rft_lora_params_t *relay_lora_params, byte *
 	}
 	else
 	{
-		while (!detect_preamble)
-		{
-		};
-		detect_preamble = false;
+		// while (!detect_preamble)
+		// {
+		// };
+		// detect_preamble = false;
+
+		sx126x_irq_mask_t stt;
+		sx126x_get_irq_status(&sx126x_hal, &stt);
+		while ((stt & SX126X_IRQ_PREAMBLE_DETECTED) == 0) {
+			sx126x_get_irq_status(&sx126x_hal, &stt);
+		}
 	}
-	detachInterrupt(digitalPinToInterrupt(sx126x_hal.irq));
+	// detachInterrupt(digitalPinToInterrupt(sx126x_hal.irq));
+	// SubGhz.detachInterrupt();
 
 	sx126x_irq_mask_t irq_status;
 	sx126x_get_irq_status(&sx126x_hal, &irq_status);
@@ -407,7 +389,6 @@ rft_status_t rfthings_sx126x::relay(rft_lora_params_t *relay_lora_params, byte *
 	}
 
 	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
-	// digitalWrite(sx126x_hal.antenna_switch, 0);
 
 	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 
@@ -452,7 +433,11 @@ rft_status_t rfthings_sx126x::send_lrfhss(rft_lrfhss_params_t params, byte *payl
 	/*!
 	 * LoRaWAN LR-FHSS sync word definition
 	 */
-	const uint8_t lr_fhss_sync_word[4] = {0x2C, 0x0F, 0x79, 0x95};
+	uint8_t lr_fhss_sync_word[4];
+	lr_fhss_sync_word[0] = ((lrfhss_params.syncword >> 24) & 0xff);
+	lr_fhss_sync_word[1] = ((lrfhss_params.syncword >> 16) & 0xff);
+	lr_fhss_sync_word[2] = ((lrfhss_params.syncword >> 8) & 0xff);
+	lr_fhss_sync_word[3] = ((lrfhss_params.syncword >> 0) & 0xff);
 
 	lr_fhss_v1_params_t v1_params;
 	lr_fhss_digest_t digest;
@@ -466,21 +451,18 @@ rft_status_t rfthings_sx126x::send_lrfhss(rft_lrfhss_params_t params, byte *payl
 	v1_params.bw = (lr_fhss_v1_bw_e)params.bandwidth;
 	v1_params.enable_hopping = params.hopping;
 	v1_params.header_count = params.nbSync; /**< Number of header blocks */
-
+	
 	uint16_t hop_sequence_count = lr_fhss_get_hop_sequence_count(&v1_params);
 	uint16_t hoppingPatternSeq = this->get_random_number() % hop_sequence_count;
 	uint16_t payloadOutSize = lr_fhss_build_frame(&v1_params, hoppingPatternSeq, payload, payload_len, LSBuffer);
-
 	if (payloadOutSize > 255)
 		return RFT_STATUS_ERROR_PAYLOAD_TOO_LONG;
 
 	lr_fhss_process_parameters(&v1_params, payload_len, &digest);
-
 	nbBlock = digest.nb_hops;
 	nbBits = digest.nb_bits + pulse_shape_compensation; // offset for pulse_shape_compensation (?)
 
 	lr_fhss_get_hop_params(&v1_params, &hop_params, &state, hoppingPatternSeq);
-
 	for (uint32_t i = 0; i < (4 - params.nbSync); i++)
 	{
 		hop = lr_fhss_get_next_freq_in_grid(&state, &hop_params, &v1_params);
@@ -494,9 +476,8 @@ rft_status_t rfthings_sx126x::send_lrfhss(rft_lrfhss_params_t params, byte *payl
 
 	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
 	sx126x_set_rf_freq(&sx126x_hal, params.frequency);
-	while (digitalRead(sx126x_hal.busy))
-	{
-	}
+	while (SubGhz.isBusy())
+        ;
 
 	// Use DC-DC regulator mode
 	sx126x_set_reg_mode(&sx126x_hal, SX126X_REG_MODE_DCDC);
@@ -686,7 +667,6 @@ rft_status_t rfthings_sx126x::send_uplink(byte *payload, uint32_t payload_len, v
 
 	sx126x_irq_mask_t irq_status;
 
-	// digitalWrite(sx126x_hal.antenna_switch, HIGH);
 	if (rx_func != NULL)
 	{
 		rx_func();
@@ -769,8 +749,6 @@ rft_status_t rfthings_sx126x::send_uplink(byte *payload, uint32_t payload_len, v
 			receive_downlink = true;
 		}
 	}
-
-	// digitalWrite(sx126x_hal.antenna_switch, LOW);
 
 	// parse downlink
 	if (!receive_downlink)
@@ -816,7 +794,6 @@ rft_status_t rfthings_sx126x::send_join_request(void (*tx_func)(), void (*rx_fun
 
 	uint16_t irq_status;
 
-	// digitalWrite(sx126x_hal.antenna_switch, HIGH);
 	if (rx_func != NULL)
 	{
 		rx_func();
@@ -899,8 +876,6 @@ rft_status_t rfthings_sx126x::send_join_request(void (*tx_func)(), void (*rx_fun
 			receive_downlink = true;
 		}
 	}
-
-	// digitalWrite(sx126x_hal.antenna_switch, LOW);
 
 	// parse downlink
 	if (!receive_downlink)
@@ -1233,7 +1208,7 @@ uint16_t rfthings_sx126x::get_irq_status(void)
 	sx126x_irq_mask_t irqMask;
 	sx126x_status_t status = sx126x_get_irq_status(&sx126x_hal, &irqMask);
 
-	if (status == RFT_STATUS_OK)
+	if (status == SX126X_STATUS_OK)
 	{
 			return ((uint16_t) irqMask);
 	}

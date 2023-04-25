@@ -15,10 +15,9 @@
 // Device information (For uploading relay status)
 static uint8_t nwkS_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
 static uint8_t appS_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
-static uint8_t dev_addr[] = {0x00, 0x00, 0x00, 0x00};                                                                         // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
+static uint8_t dev_addr[] = {0x01, 0x02, 0x03, 0x04};                                                                         // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
 
-// DKPlatium
-rfthings_sx126x sx126x(E22_NSS, E22_NRST, E22_BUSY, E22_DIO1, E22_RXEN);
+rfthings_sx126x sx126x;
 rft_status_t status;
 
 // Relay params (Listen to all devices meet this LoRaPHY Params, NO FILTER)
@@ -26,20 +25,22 @@ rft_lora_params_t relay_lora_params;
 byte payload[255];
 uint32_t payload_len;
 
+#define SW_VCTL1_PIN PB8
+#define SW_VCTL2_PIN PC13
+
+typedef enum {
+    RF_SW_MODE_TX = 0,
+    RF_SW_MODE_RX
+} rf_sw_mode_t;
+
 void setup(void)
 {
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(125);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(50);
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(125);
-  digitalWrite(LED_BUILTIN, LOW);
+  pinMode(SW_VCTL1_PIN, OUTPUT);
+  pinMode(SW_VCTL2_PIN, OUTPUT);
+  sw_ctrl_set_mode(RF_SW_MODE_TX);
 
   Serial.begin(115200);
-  while (!Serial && (millis() < 3000))
-    ;
+  while (!Serial && (millis() < 3000)) {}
 
   // Inititialize the LoRa Module SX126x
   status = sx126x.init(RFT_REGION_EU863_870);
@@ -94,15 +95,6 @@ void loop(void)
       Serial.println(relay_lora_params.snr);
       Serial.print("    Received Signal RSSI: ");
       Serial.println(relay_lora_params.signal_rssi);
-
-      // TODO: Your processing (Forward packet, update relay status variable, etc.)
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(125);
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(50);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(125);
-      digitalWrite(LED_BUILTIN, LOW);
     }
     else
     {
@@ -128,4 +120,28 @@ uint32_t parse_dev_id(byte *payload, uint8_t len)
     return 0; // ToDo: Verify the minimum size of a LoRaWAN Packet
 
   return ((payload[1]) | (payload[2] << 8) | (payload[3] << 16) | (payload[4] << 24));
+}
+
+void sw_ctrl_set_mode(rf_sw_mode_t mode)
+{
+  if (mode == RF_SW_MODE_TX)
+  {
+    digitalWrite(SW_VCTL1_PIN, LOW);
+    digitalWrite(SW_VCTL2_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(SW_VCTL1_PIN, HIGH);
+    digitalWrite(SW_VCTL2_PIN, LOW);
+  }
+}
+
+void sw_ctrl_set_mode_tx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_TX);
+}
+
+void sw_ctrl_set_mode_rx(void)
+{
+    sw_ctrl_set_mode(RF_SW_MODE_RX);
 }
