@@ -33,15 +33,21 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 ### <u>Is this library Low-power</u>?
 
-**No**, the library currently using polling for reading IRQ. Radio Interrupts & sleep function will be implemented later.
+**Partially**, the library currently using Radio Interrupts for Relay operations. Board Sleeping function is depend on your MCU variants. For STM32WLE55CCU on RAK3172, it is required to set ```EUWUL``` & ```EWRFIEQ``` bits in ```PWR_CR3```.
+
+*(I am opening for Pull Request of integrated Low-power library 🤞)*
 
 ### <u>What is the default syncword for LR-FHSS packets</u>?
 
-It's ```2C 0F 79 95```.
+It's ```2C 0F 79 95```. You can change it with ```set_lrfhss_syncword``` function.
 
 ```
 const uint8_t lr_fhss_sync_word[4] = {0x2C, 0x0F, 0x79, 0x95};
 ```
+
+# Credits
+
+Thanks [RFThings](https://github.com/RFThings) for lending me the hardware. The original LoRaSpaceLib is also developed by [RFThings](https://github.com/RFThings).
 
 # To-do
   - [x] Propose the To-do list 😂
@@ -55,7 +61,7 @@ const uint8_t lr_fhss_sync_word[4] = {0x2C, 0x0F, 0x79, 0x95};
     - [x] CW
   - [x] Integrate RF Switch controlling into the library
   - [x] Implement function of changing the LR-FHSS syncword
-  - [ ] Support interrupts (**via EXTI** and via **Radio Interrupt**) for Low-power activities
+  - [x] Support interrupts (**via EXTI** and via **Radio Interrupt**) for Low-power activities
   - [x] Write installation guide
   - [x] Write FAQ section
   - [ ] Propose tests/test results to verify all Parameters

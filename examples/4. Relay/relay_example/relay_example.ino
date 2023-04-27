@@ -12,6 +12,8 @@
 #include <RFThings.h>
 #include <radio/sx126x/rfthings_sx126x.h>
 
+// #define USE_LOW_POWER_FEATURE_WITH_SLEEP
+
 // Device information (For uploading relay status)
 static uint8_t nwkS_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
 static uint8_t appS_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
@@ -28,19 +30,22 @@ uint32_t payload_len;
 #define SW_VCTL1_PIN PB8
 #define SW_VCTL2_PIN PC13
 
-typedef enum {
-    RF_SW_MODE_TX = 0,
-    RF_SW_MODE_RX
+typedef enum
+{
+  RF_SW_MODE_TX = 0,
+  RF_SW_MODE_RX
 } rf_sw_mode_t;
 
 void setup(void)
 {
   pinMode(SW_VCTL1_PIN, OUTPUT);
   pinMode(SW_VCTL2_PIN, OUTPUT);
-  sw_ctrl_set_mode(RF_SW_MODE_TX);
+  sw_ctrl_set_mode(RF_SW_MODE_RX);
 
   Serial.begin(115200);
-  while (!Serial && (millis() < 3000)) {}
+  while (!Serial && (millis() < 3000))
+  {
+  }
 
   // Inititialize the LoRa Module SX126x
   status = sx126x.init(RFT_REGION_EU863_870);
@@ -69,7 +74,11 @@ void setup(void)
 
 void loop(void)
 {
-  switch (sx126x.relay(&relay_lora_params, payload, payload_len, NULL, NULL))
+#if defined(USE_LOW_POWER_FEATURE_WITH_SLEEP)
+  switch (sx126x.relay(&relay_lora_params, payload, payload_len, sw_ctrl_set_mode_rx, board_sleep))
+#else
+  switch (sx126x.relay(&relay_lora_params, payload, payload_len, sw_ctrl_set_mode_rx, NULL))
+#endif
   {
   case RFT_STATUS_OK:
     if (payload_len > 0)
@@ -138,10 +147,17 @@ void sw_ctrl_set_mode(rf_sw_mode_t mode)
 
 void sw_ctrl_set_mode_tx(void)
 {
-    sw_ctrl_set_mode(RF_SW_MODE_TX);
+  sw_ctrl_set_mode(RF_SW_MODE_TX);
 }
 
 void sw_ctrl_set_mode_rx(void)
 {
-    sw_ctrl_set_mode(RF_SW_MODE_RX);
+  sw_ctrl_set_mode(RF_SW_MODE_RX);
 }
+
+#if defined(USE_LOW_POWER_FEATURE_WITH_SLEEP)
+#error Sleep mode with Radio ON is not implemented, I am open for pull request, thanks.
+void board_sleep(void)
+{
+}
+#endif

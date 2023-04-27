@@ -13,10 +13,13 @@
 #include "sx126x_driver/sx126x.h"
 #include "sx126x_driver/sx126x_hal.h"
 #include "sx126x_driver/sx126x_regs.h"
+#include <SubGhz.h>
+
+// #define POLLING_WITH_RADIO_IRQ
 
 extern volatile bool detect_preamble;
 
-typedef void (*voidFuncPtr)(void);
+typedef void (*voidFuncPtrVoid)(void);
 
 class rfthings_sx126x : public rfthings_radio {
         public:
@@ -43,6 +46,9 @@ class rfthings_sx126x : public rfthings_radio {
         rft_status_t relay(byte *payload, uint32_t &payload_len, void (*rx_func)(), void (*sleep_func)());
         rft_status_t relay(rft_lora_params_t* relay_lora_params, byte *payload, uint32_t &payload_len, void (*rx_func)(), void (*sleep_func)());
         static void irq_relay(void) {
+            SubGhz.clearPendingInterrupt();
+            SubGhz.detachInterrupt();
+            
 	        detect_preamble = true;
         }
 

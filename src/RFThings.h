@@ -296,6 +296,5 @@ typedef enum
 } rft_status_t;
 
 const char *rft_status_to_str(rft_status_t status);
-void worship(void);
 
 #endif
