@@ -45,6 +45,10 @@ It's ```2C 0F 79 95```. You can change it with ```set_lrfhss_syncword``` functio
 const uint8_t lr_fhss_sync_word[4] = {0x2C, 0x0F, 0x79, 0x95};
 ```
 
+### <u>Can this library communicate with LoRaWAN Satellites</u>?
+
+Technically, **Yes if you send LR-FHSS packets in the approriate format & configuration**. However, communicating between devices on Earth and Satellites is quite challenging and required some special aspects. I would recommended you to contact Lacuna Space for accessing of their LoRaWAN Satellites and RFThings for antennas/RF advises.
+
 # Credits
 
 Thanks [RFThings](https://github.com/RFThings) for lending me the hardware. The original LoRaSpaceLib is also developed by [RFThings](https://github.com/RFThings).
