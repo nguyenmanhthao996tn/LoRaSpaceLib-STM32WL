@@ -42,7 +42,9 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 ### <u>Is this library Low-power</u>?
 
-**Partially**, the library currently using Radio Interrupts for Relay operations. Board Sleeping function is depend on your MCU variants. For STM32WLE55CCU on RAK3172, it is required to set ```EUWUL``` & ```EWRFIEQ``` bits in ```PWR_CR3```.
+**Partially**, the library currently using Radio Interrupts for Relay operations.
+
+Board Sleeping function is depend on your MCU variants. To keep SubGhz working while in sleep mode, for STM32WLE55CCU on RAK3172, it is required to set ```EUWUL``` & ```EWRFIEQ``` bits in ```PWR_CR3```.
 
 *(I am opening for Pull Request of integrating Low-power library into LoRa Relay operation 🤞)*
 
