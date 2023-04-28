@@ -1,4 +1,4 @@
-# LoRaSpaceLib for RAK3172 (STM32WL)
+# 🛰 LoRaSpaceLib 🛰 for RAK3172 (STM32WL)
 
 <img src="docs/rak3172.jpg" width="600">
 
@@ -8,12 +8,12 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 ## Requirement
 
-### Software
+### 💾 Software
 
   - [ArduinoIDE](https://www.arduino.cc/en/software) (It's highly recommended to use the **Legacy IDE Version** *at least version v1.6.8*)
   - [stm32duino/Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32)
   
-### Hardware
+### ⚙ Hardware
   
   - A device with [RAK3172](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172) integrated
   - A USB TTL connect to UART2 of RAK3172 module to program it
@@ -38,7 +38,7 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
   7. Click **Upload** (Ctrl + U) & enjoy!
 
-# FAQ
+# FAQ ⁉
 
 ### <u>Is this library Low-power</u>?
 
@@ -58,11 +58,11 @@ const uint8_t lr_fhss_sync_word[4] = {0x2C, 0x0F, 0x79, 0x95};
 
 Technically, **Yes if you send LR-FHSS packets in the approriate format & configuration**. However, communicating between devices on Earth and Satellites is quite challenging and required some special aspects. I would recommended you to contact Lacuna Space for accessing of their LoRaWAN Satellites and RFThings for antennas/RF advises.
 
-# Credits
+# 🍀 Credits
 
 Thanks [RFThings](https://github.com/RFThings) for lending me the hardware. The original LoRaSpaceLib is also developed by [RFThings](https://github.com/RFThings).
 
-# To-do
+# 🏁 To-do
   - [x] Propose the To-do list 😂
   - [x] Library functionalities
     - [x] LoRa PHY Send/Receive
