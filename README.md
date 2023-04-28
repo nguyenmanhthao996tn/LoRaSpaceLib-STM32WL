@@ -10,8 +10,8 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 ### 💾 Software
 
-  - [ArduinoIDE](https://www.arduino.cc/en/software) (It's highly recommended to use the **Legacy IDE Version** *at least version v1.6.8*)
-  - [stm32duino/Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32)
+  - [ArduinoIDE](https://www.arduino.cc/en/software) (highly recommended to use the **Legacy IDE Version** *at least version v1.6.8*)
+  - [stm32duino/Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32) (***version >= 1.3.0** is recommended*)
   
 ### ⚙ Hardware
   
@@ -44,7 +44,11 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 **Partially**, the library currently using Radio Interrupts for Relay operations. Board Sleeping function is depend on your MCU variants. For STM32WLE55CCU on RAK3172, it is required to set ```EUWUL``` & ```EWRFIEQ``` bits in ```PWR_CR3```.
 
-*(I am opening for Pull Request of integrated Low-power library 🤞)*
+*(I am opening for Pull Request of integrating Low-power library into LoRa Relay operation 🤞)*
+
+For other normally sleep (without using of Radio while sleeping), refer to [STM32WL-Lowpower](./examples/6.%20Others/STM32WL-Lowpower/). Measurement results are available in [docs folder](./docs/stm32wl-lowpower-measurement-results/).
+
+<img src="docs/stm32wl-lowpower-measurement-results/power_comsumption.png" width="400">
 
 ### <u>What is the default syncword for LR-FHSS packets</u>?
 
@@ -60,7 +64,7 @@ Technically, **Yes if you send LR-FHSS packets in the approriate format & config
 
 # 🍀 Credits
 
-Thanks [RFThings](https://github.com/RFThings) for lending me the hardware. The original LoRaSpaceLib is also developed by [RFThings](https://github.com/RFThings).
+Thanks **Côte d'Azur University** & [**RFThings CO.,Ltd.**](https://github.com/RFThings) for lending me the hardware. The original LoRaSpaceLib is also developed by [RFThings](https://github.com/RFThings).
 
 # 🏁 To-do
   - [x] Propose the To-do list 😂
