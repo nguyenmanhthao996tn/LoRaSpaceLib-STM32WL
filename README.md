@@ -7,11 +7,20 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 # Installation
 
 ## Requirement
+
+### Software
+
   - [ArduinoIDE](https://www.arduino.cc/en/software) (It's highly recommended to use the **Legacy IDE Version** *at least version v1.6.8*)
   - [stm32duino/Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32)
+  
+### Hardware
+  
   - A device with [RAK3172](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172) integrated
+  - A USB TTL connect to UART2 of RAK3172 module to program it
 
 ## Setup Guide
+
+  0. Download & install the required software listed in [the previous section](#software)
   1. Download this reposistory as ZIP
 
 <img src="docs/github-download-as-zip.jpg" width="600">
