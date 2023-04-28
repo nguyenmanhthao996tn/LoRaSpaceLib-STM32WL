@@ -36,7 +36,7 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 <img src="docs/examples-menu.jpg" width="400">
 
-  7. Click **Upload** (Ctrl + U) & enjoy!
+  7. Trigger Bootloader Mode in your board & Click **Upload** (Ctrl + U) & enjoy!
 
 # FAQ ⁉
 
