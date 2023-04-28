@@ -78,6 +78,7 @@ Thanks **Côte d'Azur University** & [**RFThings CO.,Ltd.**](https://github.com/
     - [x] Send to relay
     - [x] Receive from Relay
     - [x] CW
+    - [x] MCU Stop mode
   - [x] Integrate RF Switch controlling into the library
   - [x] Implement function of changing the LR-FHSS syncword
   - [x] Support interrupts (**via EXTI** and via **Radio Interrupt**) for Low-power activities
