@@ -7,6 +7,10 @@
  *                              /_/
  * Author: m1nhle, mtnguyen
  * Lib jointy developed by UCA & RFThings
+ * 
+ * This section is intended for antenna or system functional testing.
+ * The sketch in this section generates a continuous wave at a specific
+ * Frequency and Output power level.
  */
 
 /* Support REGION
@@ -34,7 +38,7 @@ typedef enum {
     RF_SW_MODE_RX
 } rf_sw_mode_t;
 
-void setup()
+void setup(void)
 {
     pinMode(SW_VCTL1_PIN, OUTPUT);
     pinMode(SW_VCTL2_PIN, OUTPUT);
@@ -55,7 +59,7 @@ void setup()
     sx126x.set_tx_power(22);
 }
 
-void loop()
+void loop(void)
 {
     Serial.println("start_continuous_wave");
     sw_ctrl_set_mode_tx();

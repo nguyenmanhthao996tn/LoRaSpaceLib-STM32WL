@@ -7,6 +7,10 @@
  *                              /_/
  * Author: m1nhle, mtnguyen
  * Lib jointy developed by UCA & RFThings
+ * 
+ * This example sends a "Hello world" LoRaWAN packet with 1-second
+ * extended preamble length every TX_INTERVAL seconds.
+ * 
  */
 
 /* Support REGION
@@ -46,7 +50,7 @@ typedef enum {
     RF_SW_MODE_RX
 } rf_sw_mode_t;
 
-void setup()
+void setup(void)
 {
   pinMode(SW_VCTL1_PIN, OUTPUT);
   pinMode(SW_VCTL2_PIN, OUTPUT);
@@ -79,7 +83,7 @@ void setup()
   delay(2000);
 }
 
-void loop()
+void loop(void)
 {
   Serial.print("Sending LoRaWAN message: ");
 

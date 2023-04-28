@@ -7,6 +7,10 @@
  *                              /_/
  * Author: m1nhle, mtnguyen
  * Lib jointy developed by UCA & RFThings
+ * 
+ * This example demonstrates sending simple LoRaWAN packets in Activation by
+ * Personalization (ABP) activation. The lorawan_abp_example send a "hello world"
+ * packet every TX_INTERVAL seconds to the Gateway.
  */
 
 /* Support REGION
@@ -46,7 +50,7 @@ typedef enum {
     RF_SW_MODE_RX
 } rf_sw_mode_t;
 
-void setup()
+void setup(void)
 {
     pinMode(SW_VCTL1_PIN, OUTPUT);
     pinMode(SW_VCTL2_PIN, OUTPUT);
@@ -79,7 +83,7 @@ void setup()
     sx126x.set_syncword(RFT_LORA_SYNCWORD_PUBLIC);
 }
 
-void loop()
+void loop(void)
 {
     Serial.print("Sending LoRaWAN message: ");
 

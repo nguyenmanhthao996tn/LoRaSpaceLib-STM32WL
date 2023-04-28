@@ -7,6 +7,12 @@
  *                              /_/
  * Author: m1nhle, mtnguyen
  * Lib jointy developed by UCA & RFThings
+ * 
+ * This example continuously listens for LoRaWAN packets from sensors (or other
+ * LoRaWAN device) & prints packet information to Serial Monitor if it's successfully
+ * received. This sketch is NOT included packet integrity check, packet sender
+ * address filter, and repeat the received packet.
+ * 
  */
 
 #include <RFThings.h>

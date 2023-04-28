@@ -7,6 +7,10 @@
  *                              /_/
  * Author: m1nhle, mtnguyen
  * Lib jointy developed by UCA & RFThings
+ * 
+ * This example demonstrate sending LR-FHSS packets with or without LoRaWAN packet format. 
+ * Every TX_INTERVAL seconds, a LR-FHSS packet is sent.
+ * The library supports uplink LR-FHSS communication only.
  */
 
 /* Support REGION
@@ -41,7 +45,7 @@ typedef enum {
     RF_SW_MODE_RX
 } rf_sw_mode_t;
 
-void setup()
+void setup(void)
 {
     pinMode(SW_VCTL1_PIN, OUTPUT);
     pinMode(SW_VCTL2_PIN, OUTPUT);
@@ -68,7 +72,7 @@ void setup()
     sx126x.set_lrfhss_syncword(0x2C0F7995);
 }
 
-void loop()
+void loop(void)
 {
     Serial.println("Sending LR-FHSS message");
     message.toCharArray(payload, 255);

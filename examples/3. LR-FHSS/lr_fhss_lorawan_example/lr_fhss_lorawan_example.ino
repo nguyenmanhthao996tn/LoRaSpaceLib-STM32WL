@@ -7,6 +7,13 @@
  *                              /_/
  * Author: m1nhle, mtnguyen
  * Lib jointy developed by UCA & RFThings
+ * 
+ * This sketch operates the same as the lr_fhss_raw_example sketch.
+ * Except for the LoRaWAN packet format. Thus, it requires Device address (dev_addr),
+ * Network Session Key (NwkSKey) and Application Session Key (AppSKey) to operate.
+ * Replace those information in the source code with the ones received from your
+ * LoRaWAN Network Server. Make sure that they are all in MSB format.
+ * 
  */
 
 /* Support REGION
@@ -46,7 +53,7 @@ typedef enum {
     RF_SW_MODE_RX
 } rf_sw_mode_t;
 
-void setup()
+void setup(void)
 {
     pinMode(SW_VCTL1_PIN, OUTPUT);
     pinMode(SW_VCTL2_PIN, OUTPUT);
@@ -79,7 +86,7 @@ void setup()
     sx126x.set_lrfhss_syncword(0x2C0F7995);
 }
 
-void loop()
+void loop(void)
 {
     Serial.println("Sending LR-FHSS message");
     build_payload();
