@@ -74,7 +74,7 @@ For other normally sleep (without using of Radio while sleeping), refer to [STM3
 
 <img src="docs/stm32wl-lowpower-measurement-results/power_comsumption.png" width="400">
 
-### If you have any question or discussion points, please let me know via the Issues & Disscussions tabs 💖
+### If you have any question or discussion points, please let me know via the [Issues](https://github.com/nguyenmanhthao996tn/LoRaSpaceLib-STM32WL/issues) & [Disscussions](https://github.com/nguyenmanhthao996tn/LoRaSpaceLib-STM32WL/discussions) tabs 💖
 
 # 🍀 Credits
 
