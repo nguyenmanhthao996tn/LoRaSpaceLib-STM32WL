@@ -47,6 +47,9 @@ rft_status_t rfthings_sx126x::init(rft_region_t region)
 	SubGhz.SPI.begin();
 	SubGhz.setResetActive(false);
 
+	sx126x_hal_wakeup(&sx126x_hal);
+	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
+
 	sx126x_hal_reset(&sx126x_hal);
 
 	if (check_hardware() != RFT_STATUS_OK)
@@ -316,7 +319,7 @@ rft_status_t rfthings_sx126x::relay(rft_lora_params_t *relay_lora_params, byte *
 	}
 	else
 	{
-#if POLLING_WITH_RADIO_IRQ
+#if defined(POLLING_WITH_RADIO_IRQ)
 		while (!detect_preamble)
 		{
 		};
@@ -559,8 +562,6 @@ rft_status_t rfthings_sx126x::send_lrfhss(rft_lrfhss_params_t params, byte *payl
 	uint16_t irq_mask = (SX126X_IRQ_TX_DONE | SX126X_IRQ_LR_FHSS_HOP);
 	sx126x_set_dio_irq_params(&sx126x_hal, irq_mask, irq_mask, 0x00, 0x00);
 	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
-
-	SubGhz.attachInterrupt(rfthings_sx126x::irq_relay);
 
 	sx126x_set_buffer_base_address(&sx126x_hal, 0x00, 0x00);
 	sx126x_write_buffer(&sx126x_hal, 0x00, LSBuffer, payloadOutSize);
