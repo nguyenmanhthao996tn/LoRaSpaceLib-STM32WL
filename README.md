@@ -43,7 +43,7 @@ These below libraries are OPTIONAL. They are only used in ```relay_lowpower_exam
 
 <img src="docs/examples-menu.jpg" width="400">
 
-  7. Click **Upload** (Ctrl + U) & enjoy!
+  7. Trigger Bootloader Mode in your board & Click **Upload** (Ctrl + U) & enjoy!
 
 # FAQ ⁉
 
@@ -88,6 +88,7 @@ Thanks **Côte d'Azur University** & [**RFThings CO.,Ltd.**](https://github.com/
     - [x] Send to relay
     - [x] Receive from Relay
     - [x] CW
+    - [x] MCU Stop mode
   - [x] Integrate RF Switch controlling into the library
   - [x] Implement function of changing the LR-FHSS syncword
   - [x] Support interrupts (**via EXTI** and via **Radio Interrupt**) for Low-power activities
