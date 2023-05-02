@@ -18,6 +18,13 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
   - A device with [RAK3172](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172) integrated
   - A USB TTL connect to UART2 of RAK3172 module to program it
 
+### Additional Libraries
+
+These below libraries are OPTIONAL. They are only used in ```relay_lowpower_example.ino``` & ```STM32WL-Lowpower.ino```.
+  
+  - [stm32duino/STM32LowPower](https://github.com/stm32duino/STM32LowPower)
+  - [stm32duino/STM32RTC](https://github.com/stm32duino/STM32RTC)
+
 ## Setup Guide
 
   0. Download & install the required software listed in [the previous section](#software)
@@ -40,27 +47,32 @@ This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwi
 
 # FAQ ⁉
 
-### <u>Is this library Low-power</u>?
+### <u>Can this library communicate with LoRaWAN Satellites</u>?
 
-**Partially**, the library currently using Radio Interrupts for Relay operations. Board Sleeping function is depend on your MCU variants. For STM32WLE55CCU on RAK3172, it is required to set ```EUWUL``` & ```EWRFIEQ``` bits in ```PWR_CR3```.
-
-*(I am opening for Pull Request of integrating Low-power library into LoRa Relay operation 🤞)*
-
-For other normally sleep (without using of Radio while sleeping), refer to [STM32WL-Lowpower](./examples/6.%20Others/STM32WL-Lowpower/). Measurement results are available in [docs folder](./docs/stm32wl-lowpower-measurement-results/).
-
-<img src="docs/stm32wl-lowpower-measurement-results/power_comsumption.png" width="400">
+Technically, **Yes if you send LR-FHSS packets in the approriate format & configuration**. However, communicating between devices on Earth and Satellites is quite challenging and required some special aspects. I would recommended you to contact Lacuna Space for accessing of their LoRaWAN Satellites and RFThings for antennas/RF advises.
 
 ### <u>What is the default syncword for LR-FHSS packets</u>?
 
-It's ```2C 0F 79 95```. You can change it with ```set_lrfhss_syncword``` function.
+It's ```2C 0F 79 95```. You can change it with ```void set_lrfhss_syncword(uint32_t syncword);``` function.
 
 ```
 const uint8_t lr_fhss_sync_word[4] = {0x2C, 0x0F, 0x79, 0x95};
 ```
 
-### <u>Can this library communicate with LoRaWAN Satellites</u>?
+### <u>Is this library Low-power</u>?
 
-Technically, **Yes if you send LR-FHSS packets in the approriate format & configuration**. However, communicating between devices on Earth and Satellites is quite challenging and required some special aspects. I would recommended you to contact Lacuna Space for accessing of their LoRaWAN Satellites and RFThings for antennas/RF advises.
+It's mostly depend on your application source code.
+
+All examples in this library except for ```relay_lowpower_example.ino``` & ```STM32WL-Lowpower.ino``` are non-low-power to keep it simple.
+
+For Low-power relay activity, ```relay_lowpower_example.ino``` example can archived the average current consumption of **~150 uA**. However, this value is not the best case senario. You can change the ```RX SYMBOL```, ```SLEEP INTERVAL``` & ```SLEEP Mode``` to gain more battery lifetime. These configuration should be optimized according to the actual deployment. Refer to [docs folder](./docs/relay_lowpower_pwr_results/) for more information on measurement results.
+
+<img src="docs/relay_lowpower_pwr_results/relay_lowpower_pwr_results-sleep.png" height="250">
+<img src="docs/relay_lowpower_pwr_results/relay_lowpower_pwr_results-average.png" height="250">
+
+For other normally sleep (without using of Radio while sleeping), refer to [STM32WL-Lowpower](./examples/6.%20Others/STM32WL-Lowpower/). Measurement results are available in [docs folder](./docs/stm32wl-lowpower-measurement-results/).
+
+<img src="docs/stm32wl-lowpower-measurement-results/power_comsumption.png" width="400">
 
 # 🍀 Credits
 
