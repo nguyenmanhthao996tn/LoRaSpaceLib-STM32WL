@@ -39,7 +39,7 @@ sx126x_hal_status_t sx126x_hal_write(const void *context, const uint8_t *command
     SubGhz.SPI.endTransaction();
 #endif
 
-#if defined(__DEBUG_SPI_CMD_PRINT_CMD__)
+#if (defined(__DEBUG_SPI_CMD_PRINT_CMD__) && defined(USE_LOW_POWER_FEATURE_WITH_SLEEP))
     Serial.printf("cmd> sx126x_hal_write: ");
     for (uint8_t i = 0; i < (command_length + data_length); i++)
     {
@@ -87,7 +87,7 @@ sx126x_hal_status_t sx126x_hal_write_bulk(const void *context, const uint8_t *co
     SubGhz.SPI.endTransaction();
 #endif
 
-#if defined(__DEBUG_SPI_CMD_PRINT_CMD__)
+#if (defined(__DEBUG_SPI_CMD_PRINT_CMD__) && defined(USE_LOW_POWER_FEATURE_WITH_SLEEP))
     // uint8_t buffer[255];
     memcpy(buffer, command, command_length);
     memcpy(buffer + command_length, data, data_length);
@@ -109,7 +109,7 @@ sx126x_hal_status_t sx126x_hal_read(const void *context, const uint8_t *command,
     memcpy(buffer, command, command_length);
     memset(buffer + command_length, SX126X_NOP, data_length);
 
-#if defined(__DEBUG_SPI_CMD_PRINT_CMD__)
+#if (defined(__DEBUG_SPI_CMD_PRINT_CMD__) && defined(USE_LOW_POWER_FEATURE_WITH_SLEEP))
     Serial.printf("cmd> sx126x_hal_read: \n            Tx: ");
     for (uint8_t i = 0; i < (command_length + data_length); i++)
     {
@@ -135,7 +135,7 @@ sx126x_hal_status_t sx126x_hal_read(const void *context, const uint8_t *command,
 
     memcpy(data, buffer + command_length, data_length);
 
-#if defined(__DEBUG_SPI_CMD_PRINT_CMD__)
+#if (defined(__DEBUG_SPI_CMD_PRINT_CMD__) && defined(USE_LOW_POWER_FEATURE_WITH_SLEEP))
     Serial.printf("            Rx: ");
     for (uint8_t i = 0; i < (command_length + data_length); i++)
     {
@@ -152,12 +152,12 @@ sx126x_hal_status_t sx126x_hal_reset(const void *context)
 #if !defined(__DEBUG_SPI_CMD_DISABLE_TX_CMD__)
     delay(20);
     SubGhz.setResetActive(true);
-    delay(50);
+    delay(100);
     SubGhz.setResetActive(false);
     delay(20);
 #endif
 
-#if defined(__DEBUG_SPI_CMD_PRINT_CMD__)
+#if (defined(__DEBUG_SPI_CMD_PRINT_CMD__) && defined(USE_LOW_POWER_FEATURE_WITH_SLEEP))
     Serial.printf("cmd> sx126x_hal_reset\n");
 #endif
 
@@ -179,7 +179,7 @@ sx126x_hal_status_t sx126x_hal_wakeup(const void *context)
         ;
 #endif
 
-#if defined(__DEBUG_SPI_CMD_PRINT_CMD__)
+#if (defined(__DEBUG_SPI_CMD_PRINT_CMD__) && defined(USE_LOW_POWER_FEATURE_WITH_SLEEP))
     Serial.printf("cmd> sx126x_hal_wakeup\n");
 #endif
 
