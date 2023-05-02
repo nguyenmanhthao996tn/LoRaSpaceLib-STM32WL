@@ -18,8 +18,6 @@
 #include <RFThings.h>
 #include <radio/sx126x/rfthings_sx126x.h>
 
-// #define USE_LOW_POWER_FEATURE_WITH_SLEEP
-
 // Device information (For uploading relay status)
 static uint8_t nwkS_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
 static uint8_t appS_key[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // <-- MODIFY THIS INFORMATION ACCORDING TO YOUR USECASE
@@ -80,11 +78,7 @@ void setup(void)
 
 void loop(void)
 {
-#if defined(USE_LOW_POWER_FEATURE_WITH_SLEEP)
-  switch (sx126x.relay(&relay_lora_params, payload, payload_len, sw_ctrl_set_mode_rx, board_sleep))
-#else
   switch (sx126x.relay(&relay_lora_params, payload, payload_len, sw_ctrl_set_mode_rx, NULL))
-#endif
   {
   case RFT_STATUS_OK:
     if (payload_len > 0)
@@ -160,10 +154,3 @@ void sw_ctrl_set_mode_rx(void)
 {
   sw_ctrl_set_mode(RF_SW_MODE_RX);
 }
-
-#if defined(USE_LOW_POWER_FEATURE_WITH_SLEEP)
-#error Sleep mode with Radio ON is not implemented, I am open for pull request, thanks.
-void board_sleep(void)
-{
-}
-#endif
