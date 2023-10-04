@@ -68,6 +68,8 @@ void setup(void)
     status = sx126x.init(RFT_REGION_EU863_870);
     Serial.print("SX126x initialization: ");
     Serial.println(rft_status_to_str(status));
+    Serial.print("Library version: ");
+    Serial.println(LIBRARY_VERSION);
 
     // LoRaWAN parameters
     sx126x.set_lorawan_activation_type(RFT_LORAWAN_ACTIVATION_TYPE_ABP);

@@ -60,6 +60,8 @@ void setup(void)
     status = sx126x.init(RFT_REGION_EU863_870);
     Serial.print("SX126x initialization: ");
     Serial.println(rft_status_to_str(status));
+    Serial.print("Library version: ");
+    Serial.println(LIBRARY_VERSION);
 
     // Config LR-FHSS parameter
     sx126x.set_lrfhss_codingRate(RFT_LRFHSS_CODING_RATE_1_3);

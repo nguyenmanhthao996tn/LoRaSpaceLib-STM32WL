@@ -79,6 +79,8 @@ void setup(void)
   status = sx126x.init(RFT_REGION_EU863_870);
   LOG_D("LoRa SX126x: ");
   LOG_D_LN(rft_status_to_str(status));
+  LOG_D("Library version: ");
+  LOG_D_LN(LIBRARY_VERSION);
 
   // Set up LoRaWAN key (ABP by default)
   sx126x.set_lorawan_activation_type(RFT_LORAWAN_ACTIVATION_TYPE_ABP);

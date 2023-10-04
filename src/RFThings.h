@@ -15,6 +15,8 @@
 #include <Arduino.h>
 #include "stdint.h"
 
+#define LIBRARY_VERSION "1.0.1"
+
 // Region
 typedef enum
 {
