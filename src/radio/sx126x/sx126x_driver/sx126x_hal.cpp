@@ -169,6 +169,7 @@ sx126x_hal_status_t sx126x_hal_wakeup(const void *context)
 #if !defined(__DEBUG_SPI_CMD_DISABLE_TX_CMD__)
     SubGhz.SPI.beginTransaction(SubGhz.spi_settings);
     SubGhz.setNssActive(true);
+    delay(5);
 
     SubGhz.SPI.transfer(0x00);
 

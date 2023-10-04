@@ -29,6 +29,7 @@ rfthings_sx126x::~rfthings_sx126x(void)
 
 void rfthings_sx126x::sleep(void)
 {
+	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
 	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 }
 
@@ -89,7 +90,7 @@ rft_status_t rfthings_sx126x::check_hardware(void)
 
 rft_status_t rfthings_sx126x::send_lora(byte *payload, uint32_t payload_len, uint32_t timeout, void (*tx_func)())
 {
-	sx126x_wakeup(&sx126x_hal);
+	sx126x_hal_wakeup(&sx126x_hal);
 	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
 
 	sx126x_irq_mask_t irq_status;
@@ -158,14 +159,14 @@ rft_status_t rfthings_sx126x::send_lora(byte *payload, uint32_t payload_len, uin
 
 	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
 
-	// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
+	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 
 	return RFT_STATUS_TX_DONE;
 }
 
 rft_status_t rfthings_sx126x::receive_lora(byte *payload, uint32_t payload_len, uint32_t timeout, void (*rx_func)())
 {
-	sx126x_wakeup(&sx126x_hal);
+	sx126x_hal_wakeup(&sx126x_hal);
 	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
 
 	sx126x_irq_mask_t irq_status;
@@ -263,7 +264,7 @@ rft_status_t rfthings_sx126x::relay(rft_lora_params_t *relay_lora_params, byte *
 
 	rft_status_t return_value = RFT_STATUS_OK;
 
-	sx126x_wakeup(&sx126x_hal);
+	sx126x_hal_wakeup(&sx126x_hal);
 	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
 
 	// Preable length for Relay application
@@ -628,12 +629,12 @@ rft_status_t rfthings_sx126x::send_lrfhss(rft_lrfhss_params_t params, byte *payl
 	{
 		delay(5);
 	}
-	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
 
 	uint8_t lr_fhss_reg_value = 0;
 	sx126x_write_register(&sx126x_hal, SX126X_LR_FHSS_REG_CTRL, &lr_fhss_reg_value, 1);
 
-	// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
+	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
+	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 
 	return RFT_STATUS_OK;
 }
@@ -770,7 +771,8 @@ rft_status_t rfthings_sx126x::send_uplink(byte *payload, uint32_t payload_len, v
 	// parse downlink
 	if (!receive_downlink)
 	{
-		// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
+		sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
+		sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 		lorawan_params.rx_length = 0;
 		return RFT_STATUS_RX_TIMEOUT;
 	}
@@ -788,7 +790,8 @@ rft_status_t rfthings_sx126x::send_uplink(byte *payload, uint32_t payload_len, v
 	payload_len = rx_buffer_status.pld_len_in_bytes;
 	sx126x_read_buffer(&sx126x_hal, rx_buffer_status.buffer_start_pointer, payload, payload_len);
 
-	// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
+	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
+	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 
 	return parse_downlink(payload, payload_len);
 }
@@ -897,7 +900,8 @@ rft_status_t rfthings_sx126x::send_join_request(void (*tx_func)(), void (*rx_fun
 	// parse downlink
 	if (!receive_downlink)
 	{
-		// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
+		sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
+		sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 		lorawan_params.rx_length = 0;
 		return RFT_STATUS_RX_TIMEOUT;
 	}
@@ -915,7 +919,8 @@ rft_status_t rfthings_sx126x::send_join_request(void (*tx_func)(), void (*rx_fun
 	packet_len = rx_buffer_status.pld_len_in_bytes;
 	sx126x_read_buffer(&sx126x_hal, rx_buffer_status.buffer_start_pointer, lorawan_packet, packet_len);
 
-	// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
+	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
+	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 
 	return parse_join_accept(lorawan_packet, packet_len);
 }
@@ -946,8 +951,10 @@ rft_status_t rfthings_sx126x::start_continuous_wave(void)
 
 rft_status_t rfthings_sx126x::stop_continuous_wave(void)
 {
-	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC); // setStandby(0);
-	// sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START); // setSleep();
+	sx126x_set_standby(&sx126x_hal, SX126X_STANDBY_CFG_RC);
+	delay(1);
+	sx126x_clear_irq_status(&sx126x_hal, SX126X_IRQ_ALL);
+	sx126x_set_sleep(&sx126x_hal, SX126X_SLEEP_CFG_WARM_START);
 	return RFT_STATUS_OK;
 }
 
