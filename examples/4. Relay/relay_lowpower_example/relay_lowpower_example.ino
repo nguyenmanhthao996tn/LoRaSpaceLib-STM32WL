@@ -6,7 +6,7 @@
    /_____/\____/_/ |_|\__,_//____/ .___/\__,_/\___/\___/_____/_/_.___/
                                 /_/
    Author: mtnguyen
-   Lib jointy developed by UCA & RFThings
+   This library jointy developed by UCA & RFThings
 
    This example continuously listens for LoRaWAN packets from sensors (or other
    LoRaWAN device) & prints packet information to Serial Monitor if it's successfully

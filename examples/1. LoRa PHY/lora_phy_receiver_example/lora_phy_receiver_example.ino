@@ -5,8 +5,8 @@
  *  / /___/ /_/ / _, _/ /_/ /___/ / /_/ / /_/ / /__/  __/ /___/ / /_/ /
  * /_____/\____/_/ |_|\__,_//____/ .___/\__,_/\___/\___/_____/_/_.___/
  *                              /_/
- * Author: m1nhle, mtnguyen
- * Lib jointy developed by UCA & RFThings
+ * Author: mtnguyen
+ * This library jointy developed by UCA & RFThings
  * 
  * This example demonstates receiving a LoRa PHY packets. 
  */

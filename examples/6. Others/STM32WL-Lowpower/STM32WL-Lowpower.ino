@@ -6,7 +6,7 @@
  * /_____/\____/_/ |_|\__,_//____/ .___/\__,_/\___/\___/_____/_/_.___/
  *                              /_/
  * Author: mtnguyen
- * Lib jointy developed by UCA & RFThings
+ * This library jointy developed by UCA & RFThings
  *
  * This example demonstrates how to set the MCU/Board in Sleep mode and waking up with RTC alarm.
  * Please install these library to proceed.
