@@ -2,7 +2,7 @@
 
 <img src="docs/rak3172.jpg" width="600">
 
-This reposistory aim to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172) (STM32WLE55CCUx) using [STM32duino Core](https://github.com/stm32duino/Arduino_Core_STM32).
+This reposistory aims to deploy the LoRaSpaceLib on [RAK3172](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172) (STM32WLE55CCUx) using [STM32duino Core](https://github.com/stm32duino/Arduino_Core_STM32).
 
 # Installation
 
@@ -65,12 +65,12 @@ It's mostly depend on your application source code.
 
 All examples in this library except for ```relay_lowpower_example.ino``` & ```STM32WL-Lowpower.ino``` are non-low-power to keep it simple.
 
-For Low-power relay activity, ```relay_lowpower_example.ino``` example can archived the average current consumption of **~150 uA**. However, this value is not the best case senario. You can change the ```RX SYMBOL```, ```SLEEP INTERVAL``` & ```SLEEP Mode``` to gain more battery lifetime. These configuration should be optimized according to the actual deployment. Refer to [docs folder](./docs/relay_lowpower_pwr_results/) for more information on measurement results.
+For Low-power relay activity, ```relay_lowpower_example.ino``` example can archived the average current consumption of **~60 uA**. However, this value is not the best case senario. You can change the ```RX SYMBOL```, ```SLEEP INTERVAL``` & ```SLEEP Mode``` to gain more battery lifetime. These configuration should be optimized according to the actual deployment. Refer to [docs folder](./docs/relay_lowpower_pwr_results/) for more information on measurement results.
 
 <img src="docs/relay_lowpower_pwr_results/relay_lowpower_pwr_results-sleep.png" height="250">
 <img src="docs/relay_lowpower_pwr_results/relay_lowpower_pwr_results-average.png" height="250">
 
-For other normally sleep (without using of Radio while sleeping), refer to [STM32WL-Lowpower](./examples/6.%20Others/STM32WL-Lowpower/). Measurement results are available in [docs folder](./docs/stm32wl-lowpower-measurement-results/).
+For other normally sleep (without using of Radio while sleeping - [STM32WL-Lowpower](./examples/6.%20Others/STM32WL-Lowpower/)), it can reach **~5 uA**. Measurement results are available in [docs folder](./docs/stm32wl-lowpower-measurement-results/).
 
 <img src="docs/stm32wl-lowpower-measurement-results/power_comsumption.png" width="400">
 
@@ -96,7 +96,7 @@ Thanks **Côte d'Azur University** & [**RFThings CO.,Ltd.**](https://github.com/
   - [x] Support interrupts (**via EXTI** and via **Radio Interrupt**) for Low-power activities
   - [x] Write installation guide
   - [x] Write FAQ section
-  - [ ] Propose tests/test results to verify all Parameters
+  - [x] Propose tests/test results to verify all Parameters
   - [ ] Merge library with other sx126x/lr11xx hardware library (DKAIoT, Gemini)
   - [ ] Customize STM32Duino Core
 
